@@ -14,17 +14,31 @@ import {
   Text,
   useColorModeValue,
 } from "@chakra-ui/react";
-import React from "react";
+import {
+  auth,
+  signInWithGoogle,
+  logInWithEmailAndPassword,
+} from "../firebase.js";
+import { useAuthState } from "react-firebase-hooks/auth";
+import React, { useEffect } from "react";
 import useForm from "../hooks/useForm";
 
 function Login() {
   const [value, setValue] = useForm({ email: "", password: "" });
+
+  const [user, loading, error] = useAuthState(auth);
 
   const isError = value === "";
 
   const onSubmit = (e) => {
     e.preventDefault();
   };
+
+  useEffect(() => {
+    if (loading) {
+      return;
+    }
+  });
 
   return (
     <Flex
@@ -47,12 +61,7 @@ function Login() {
           p={8}
         >
           <Stack spacing={4}>
-            <FormControl
-              id="email"
-              isInvalid={isError}
-              isRequired
-              onSubmit={onSubmit}
-            >
+            <FormControl isInvalid={isError} isRequired onSubmit={onSubmit}>
               <FormLabel>Email address</FormLabel>
               <Input
                 type="email"
@@ -115,8 +124,23 @@ function Login() {
                   bg: "blue.500",
                 }}
                 type="submit"
+                onClick={() =>
+                  logInWithEmailAndPassword(value.email, value.password)
+                }
               >
                 Sign in
+              </Button>
+
+              <Button
+                bg={"blue.400"}
+                color={"white"}
+                _hover={{
+                  bg: "blue.500",
+                }}
+                type="submit"
+                onClick={signInWithGoogle}
+              >
+                Sign in with Google
               </Button>
             </Stack>
           </Stack>
