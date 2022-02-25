@@ -8,37 +8,34 @@ import {
   FormErrorMessage,
   FormLabel,
   Heading,
-  Input,
   Link,
+  Input,
   Stack,
   Text,
   useColorModeValue,
 } from "@chakra-ui/react";
+
 import {
   auth,
   signInWithGoogle,
   logInWithEmailAndPassword,
 } from "../firebase.js";
 import { useAuthState } from "react-firebase-hooks/auth";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import useForm from "../hooks/useForm";
 
 function Login() {
   const [value, setValue] = useForm({ email: "", password: "" });
+  const [isError, setIsError] = useState(false);
 
   const [user, loading, error] = useAuthState(auth);
 
-  const isError = value === "";
-
   const onSubmit = (e) => {
-    e.preventDefault();
+    const isError = value.email === "" || value.password === "";
+    setIsError(isError);
+    if (isError) return;
+    logInWithEmailAndPassword(value.email, value.password);
   };
-
-  useEffect(() => {
-    if (loading) {
-      return;
-    }
-  });
 
   return (
     <Flex
@@ -124,9 +121,7 @@ function Login() {
                   bg: "blue.500",
                 }}
                 type="submit"
-                onClick={() =>
-                  logInWithEmailAndPassword(value.email, value.password)
-                }
+                onClick={onSubmit}
               >
                 Sign in
               </Button>
