@@ -23,12 +23,20 @@ import {
 import { useAuthState } from "react-firebase-hooks/auth";
 import React, { useEffect, useState } from "react";
 import useForm from "../hooks/useForm";
+import { useNavigate } from "react-router-dom";
 
 function Login() {
   const [value, setValue] = useForm({ email: "", password: "" });
   const [isError, setIsError] = useState(false);
 
   const [user, loading, error] = useAuthState(auth);
+  const navigate = useNavigate();
+
+  console.log(loading, user);
+  useEffect(() => {
+    if (loading) return;
+    if (user) return navigate("./asdf");
+  }, [navigate, user, loading]);
 
   const onSubmit = (e) => {
     const isError = value.email === "" || value.password === "";
@@ -42,7 +50,7 @@ function Login() {
       minH={"100vh"}
       align={"center"}
       justify={"center"}
-      bg={useColorModeValue("black", "white")}
+      bg={useColorModeValue("white", "black")}
     >
       <Stack color={"black"} spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
         <Stack align={"center"}>
@@ -53,7 +61,7 @@ function Login() {
         </Stack>
         <Box
           rounded={"lg"}
-          bg={useColorModeValue("black", "white")}
+          bg={useColorModeValue("white", "black")}
           boxShadow={"lg"}
           p={8}
         >
